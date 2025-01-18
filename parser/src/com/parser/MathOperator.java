@@ -20,10 +20,6 @@ public enum MathOperator {
 		this.text = text;
 	}
 
-	public int getPrecedence() {
-		return precedence;
-	}
-
 	public String getText() {
 		return text;
 	}
@@ -214,10 +210,16 @@ public enum MathOperator {
 		}
 
 		/**
-		 * Tests if this token is stuck to the specified, according to their position in
-		 * the text.
+		 * Tests if this token is stuck to the specified, according to theirs positions
+		 * in the text.
 		 * 
-		 * @param expression TODO
+		 * Two operators are considered stuck if the text between them is blank.
+		 * 
+		 * @param token      the token operator to which to compare {@code this}.
+		 * @param expression the expression in which tokens are present. It's parsed to
+		 *                   know if operators are stick.
+		 * @return {@code true} if and only if wrapped operators at them positions are
+		 *         stick in text {@code expression}.
 		 */
 		public boolean isStuck(OperatorToken token, String expression) {
 			if (token == null || expression == null) {
