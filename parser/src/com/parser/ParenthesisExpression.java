@@ -1,5 +1,7 @@
 package com.parser;
 
+import java.util.Map;
+
 import com.parser.MathOperator.OperatorToken;
 
 public class ParenthesisExpression extends ValueExpression {
@@ -8,6 +10,20 @@ public class ParenthesisExpression extends ValueExpression {
 
 	public ParenthesisExpression(String expression) throws ParserException {
 		super(expression);
+		init(expression);
+	}
+
+	/**
+	 * We add this constructor in favor to take care of passing system
+	 * variables(remember, system variables may not respect standard variables
+	 * syntax).
+	 */
+	protected ParenthesisExpression(String expression, Map<String, Number> variables) {
+		super(expression, variables);
+		init(expression);
+	}
+
+	private void init(String expression) {
 		if (Expression.checkParenthesize(expression) >= 0) {
 			throw new ExpressionFormatException("Bad parenthesizes!");
 		}
@@ -139,7 +155,7 @@ public class ParenthesisExpression extends ValueExpression {
 		int open;
 		do {
 			open = nextPriorOpen();
-			//System.out.println(open + "\t:\t" + getAsText());
+			// System.out.println(open + "\t:\t" + getAsText());
 			setAsText(eval(open));
 		} while (open >= 0);
 		SimpleExpression se = new SimpleExpression(getAsText(), getVariables());
