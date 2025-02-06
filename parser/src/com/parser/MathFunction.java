@@ -37,7 +37,8 @@ public enum MathFunction {
 			case COS:
 				return Math.cos(radian);
 			case LN:
-				Math.log(x);
+				//System.out.println("x="+ x);
+				return Math.log(x);
 			case SIN:
 				return Math.sin(radian);
 			case SQRT:
