@@ -8,6 +8,8 @@ public class MathMain {
 		se.withVariable("_x1", 10);
 		se.withVariable("a", 3);
 		System.out.println(se.eval());
+		FunctionExpression fe = new FunctionExpression("(cos(pi) + 2) - sin(pi/2)", false);
+		System.out.println(fe.eval());
 	}
 
 }
