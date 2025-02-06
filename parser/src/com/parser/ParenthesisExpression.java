@@ -1,7 +1,6 @@
 package com.parser;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 
 import com.parser.MathOperator.OperatorToken;
 
@@ -11,7 +10,21 @@ public class ParenthesisExpression extends ValueExpression {
 
 	public ParenthesisExpression(String expression) throws ParserException {
 		super(expression);
-		if (checkParenthesize(expression) >= 0) {
+		init(expression);
+	}
+
+	/**
+	 * We add this constructor in favor to take care of passing system
+	 * variables(remember, system variables may not respect standard variables
+	 * syntax).
+	 */
+	protected ParenthesisExpression(String expression, Map<String, Number> variables) {
+		super(expression, variables);
+		init(expression);
+	}
+
+	private void init(String expression) {
+		if (Expression.checkParenthesize(expression) >= 0) {
 			throw new ExpressionFormatException("Bad parenthesizes!");
 		}
 	}
@@ -22,37 +35,6 @@ public class ParenthesisExpression extends ValueExpression {
 			name = SYSTEM_VAR_MARK + variableKey++;
 		} while (getVariables().containsKey(name));
 		return name;
-	}
-
-	/**
-	 * Checks if the this expression, parenthesize are correctly used.
-	 * 
-	 * @param expression the expression to parse.
-	 * @return {@code -1} if parenthesize are correctly positioned in the
-	 *         expression, index of the first bad positioned parenthesis else.
-	 */
-	protected int checkParenthesize(String expression) {
-		if (expression != null && !expression.isBlank()) {
-			int i = 0, len = expression.length();
-			char c = 0;
-			List<Integer> open = new LinkedList<>(), closed = new LinkedList<>();
-			while (i < len) {
-				c = expression.charAt(i++);
-				if (c == '(') {
-					open.add(i);
-				}
-				if (c == ')') {
-					closed.add(i);
-				}
-				if (closed.size() > open.size()) {
-					return i;
-				}
-			}
-			if (closed.size() < open.size()) {
-				return open.get(0);
-			}
-		}
-		return -1;
 	}
 
 	/**
@@ -173,7 +155,7 @@ public class ParenthesisExpression extends ValueExpression {
 		int open;
 		do {
 			open = nextPriorOpen();
-			//System.out.println(open + "\t:\t" + getAsText());
+			// System.out.println(open + "\t:\t" + getAsText());
 			setAsText(eval(open));
 		} while (open >= 0);
 		SimpleExpression se = new SimpleExpression(getAsText(), getVariables());

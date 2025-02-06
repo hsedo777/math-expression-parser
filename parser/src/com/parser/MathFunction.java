@@ -1,5 +1,8 @@
 package com.parser;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Provides the list of supported maths function by this parser API. Anytime you
  * use functions, you have to delimit function's argument with parenthesize.
@@ -34,7 +37,8 @@ public enum MathFunction {
 			case COS:
 				return Math.cos(radian);
 			case LN:
-				Math.log(x);
+				//System.out.println("x="+ x);
+				return Math.log(x);
 			case SIN:
 				return Math.sin(radian);
 			case SQRT:
@@ -45,6 +49,73 @@ public enum MathFunction {
 			return Double.NaN;
 		} catch (Exception e) {
 			throw new ParserException("Evaluation fails.", e);
+		}
+	}
+
+	/**
+	 * Tries to fetch the next occurence of a function in the supplyed expression.
+	 * When found, an instance of {@link MathFunctionToken} is returned using index
+	 * of first letter of the function in the expression as token's index and the
+	 * matched function as token's function.
+	 * 
+	 * @param from       the index, inclusive, from which to start seaching in the
+	 *                   expression.
+	 * @param expression the maths expression to parse.
+	 * @return the matched token, {@code null} if there isn't matching.
+	 */
+	public static MathFunctionToken nextFunction(int from, String expression) {
+		if (from < 0 || expression == null || expression.isBlank() || expression.length() <= from) {
+			return null;
+		}
+		int i = from;
+		String sub;
+		expression = expression.toLowerCase();
+		do {
+			sub = expression.substring(i);
+			for (MathFunction f : MathFunction.values()) {
+				if (sub.startsWith(f.getText().toLowerCase())) {
+					return new MathFunctionToken(f, i);
+				}
+			}
+		} while (++i < expression.length());
+		return null;
+	}
+
+	/**
+	 * This class is a helper to the closest class. Its used to tokenize function
+	 * occurences in a maths expression. It wraps the function and its index in the
+	 * expression.
+	 * 
+	 * @author hovozounkou
+	 */
+	public static final class MathFunctionToken implements Serializable {
+
+		private static final long serialVersionUID = -4045931994861839883L;
+
+		final public MathFunction function;
+		final public int index;
+
+		private MathFunctionToken(MathFunction function, int index) {
+			super();
+			this.function = function;
+			this.index = index;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(function, index);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MathFunctionToken other = (MathFunctionToken) obj;
+			return function == other.function && index == other.index;
 		}
 	}
 }
