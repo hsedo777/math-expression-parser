@@ -30,7 +30,6 @@ public class ValueExpression implements Expression {
 	protected ValueExpression(String expression, Map<String, Number> variables) throws ParserException {
 		this(expression);
 		this.variables.putAll(variables);
-		;
 	}
 
 	@Override
@@ -111,6 +110,10 @@ public class ValueExpression implements Expression {
 
 	protected void putVariable(String name, Number value) {
 		variables.put(name, value);
+	}
+
+	protected void putAll(Map<String, ? extends Number> variables) {
+		this.variables.putAll(variables);
 	}
 
 	public void withVariable(String name, Number value) {

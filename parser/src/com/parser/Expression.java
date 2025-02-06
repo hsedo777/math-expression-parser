@@ -1,5 +1,7 @@
 package com.parser;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /** Clause of being maths expression. */
@@ -13,6 +15,37 @@ public interface Expression {
 	 * have.
 	 */
 	static final int VARIABLE_NAME_MAX_LENGTH = 64;
+	
+	/**
+	 * Checks if the parenthesize in the expression are correctly used.
+	 * 
+	 * @param expression the expression to parse.
+	 * @return {@code -1} if parenthesize are correctly positioned in the
+	 *         expression, index of the first bad positioned parenthesis else.
+	 */
+	static int checkParenthesize(String expression) {
+		if (expression != null && !expression.isBlank()) {
+			int i = 0, len = expression.length();
+			char c = 0;
+			List<Integer> open = new LinkedList<>(), closed = new LinkedList<>();
+			while (i < len) {
+				c = expression.charAt(i++);
+				if (c == '(') {
+					open.add(i);
+				}
+				if (c == ')') {
+					closed.add(i);
+				}
+				if (closed.size() > open.size()) {
+					return i;
+				}
+			}
+			if (closed.size() < open.size()) {
+				return open.get(0);
+			}
+		}
+		return -1;
+	}
 
 	/**
 	 * Evals expression and produces the value as {@code double}.
